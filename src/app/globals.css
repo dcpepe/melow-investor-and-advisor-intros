@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  /* Melow brand palette */
+  --color-ink: #0b0b09; /* page background */
+  --color-ink-2: #111110; /* raised background */
+  --color-surface: #16150f; /* warm card surface */
+  --color-surface-2: #1c1b14; /* hover / nested surface */
+  --color-line: #2a2820; /* thin borders */
+  --color-line-2: #3a372b; /* stronger borders */
+  --color-gold: #ffc629; /* primary accent (buttons) */
+  --color-gold-soft: #e8a833; /* warm gold for highlight words */
+  --color-gold-dim: #8a6d1f; /* muted gold */
+  --color-cream: #f4f2ec; /* primary text */
+  --color-muted: #96938a; /* secondary text */
+  --color-faint: #6b6960; /* tertiary text */
+  --color-danger: #e5654f;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+body {
+  background: var(--color-ink);
+  color: var(--color-cream);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgba(255, 198, 41, 0.25);
+}
+
+/* Subtle radial glow used behind hero areas */
+.melow-glow {
+  background:
+    radial-gradient(600px 300px at 50% -80px, rgba(255, 198, 41, 0.07), transparent 70%),
+    var(--color-ink);
+}
+
+.melow-card-glow {
+  box-shadow:
+    0 24px 60px -30px rgba(0, 0, 0, 0.9),
+    0 0 60px -30px rgba(255, 198, 41, 0.15);
+}
+
+/* Thin scrollbars for dark UI */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2a2820 transparent;
+}

@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String?
+  passwordHash String
+  role         String    @default("viewer") // admin | viewer
+  status       String    @default("active") // active | revoked
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  lastLoginAt  DateTime?
+
+  createdInvites  Invite[] @relation("InviteCreator")
+  acceptedInvites Invite[] @relation("InviteAcceptor")
+}
+
+model Invite {
+  id         String    @id @default(cuid())
+  email      String?
+  token      String    @unique
+  role       String    @default("viewer") // admin | viewer
+  status     String    @default("pending") // pending | accepted | expired | revoked
+  expiresAt  DateTime?
+  createdBy  String
+  acceptedBy String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  creator  User  @relation("InviteCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  acceptor User? @relation("InviteAcceptor", fields: [acceptedBy], references: [id], onDelete: SetNull)
+}
+
+model Video {
+  id           String   @id @default(cuid())
+  title        String
+  description  String   @default("")
+  videoUrl     String   @default("")
+  thumbnailUrl String?
+  order        Int      @default(0)
+  published    Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model IcpBlock {
+  id        String   @id @default(cuid())
+  title     String
+  bullets   String   @default("") // newline-separated bullet points
+  order     Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AccountList {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  order       Int       @default(0)
+  published   Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  accounts    Account[]
+}
+
+model Account {
+  id            String   @id @default(cuid())
+  accountListId String
+  name          String
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  accountList AccountList @relation(fields: [accountListId], references: [id], onDelete: Cascade)
+}
+
+model SalesMaterial {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @default("")
+  type        String   @default("PDF") // Deck | Case study | One-pager | Memo | PDF | Link
+  fileUrl     String?
+  externalUrl String?
+  order       Int      @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Blurb {
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+  order     Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AnalyticsEvent {
+  id         String   @id @default(cuid())
+  userId     String?
+  eventType  String
+  entityType String?
+  entityId   String?
+  metadata   String?
+  createdAt  DateTime @default(now())
+}
