@@ -57,8 +57,8 @@ export function MaterialRow({
         />
         <Link
           href={openHref}
-          target={isExternal ? "_blank" : undefined}
-          rel={isExternal ? "noopener noreferrer" : undefined}
+          target="_blank"
+          rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 rounded-full border border-line-2 bg-surface-2 px-3 py-1.5 text-xs font-medium text-cream transition-colors hover:border-gold-dim hover:text-gold"
         >
           Open
