@@ -5,10 +5,10 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/session";
 import { sendInviteEmail } from "@/lib/email";
+import { getBaseUrl } from "@/lib/base-url";
 
-function inviteUrl(token: string) {
-  const base = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  return `${base.replace(/\/$/, "")}/invite/${token}`;
+async function inviteUrl(token: string) {
+  return `${await getBaseUrl()}/invite/${token}`;
 }
 
 export type InviteResult =
@@ -41,7 +41,7 @@ export async function createInvite(formData: FormData): Promise<InviteResult> {
     },
   });
 
-  const link = inviteUrl(invite.token);
+  const link = await inviteUrl(invite.token);
   let emailStatus: string | undefined;
   if (email && shouldSendEmail) {
     const result = await sendInviteEmail(email, link);
@@ -58,7 +58,7 @@ export async function resendInviteEmail(inviteId: string): Promise<InviteResult>
   if (!invite || invite.status !== "pending" || !invite.email) {
     return { ok: false, error: "This invite can’t be emailed." };
   }
-  const link = inviteUrl(invite.token);
+  const link = await inviteUrl(invite.token);
   const result = await sendInviteEmail(invite.email, link);
   return { ok: true, link, emailStatus: result.sent ? "Invite email sent." : result.reason };
 }

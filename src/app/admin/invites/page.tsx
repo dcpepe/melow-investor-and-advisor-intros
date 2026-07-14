@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/session";
+import { getBaseUrl } from "@/lib/base-url";
 import { CreateInviteForm } from "./CreateInviteForm";
 import { InviteRow } from "./InviteRow";
 
@@ -10,7 +11,7 @@ export default async function AdminInvitesPage() {
     include: { creator: true, acceptor: true },
   });
 
-  const base = (process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000").replace(/\/$/, "");
+  const base = await getBaseUrl();
 
   return (
     <div className="flex flex-col gap-6">
