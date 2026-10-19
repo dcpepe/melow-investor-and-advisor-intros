@@ -14,7 +14,7 @@ const ALLOWED_EVENTS = new Set([
 
 export async function trackEvent(eventType: string, entityType?: string, entityId?: string) {
   if (!ALLOWED_EVENTS.has(eventType)) return;
+  // The portal is public, so events may be anonymous.
   const user = await getCurrentUser();
-  if (!user) return;
-  await track(eventType, { userId: user.id, entityType, entityId });
+  await track(eventType, { userId: user?.id ?? null, entityType, entityId });
 }

@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/session";
 import { track } from "@/lib/track";
@@ -36,8 +35,9 @@ const icons = {
 };
 
 export default async function PortalPage() {
+  // The portal is public — anyone with the link can view it. Signing in is
+  // only needed for the admin dashboard.
   const user = await getCurrentUser();
-  if (!user) redirect("/login");
 
   const [videos, icpBlocks, accountLists, materials, blurbs] = await Promise.all([
     db.video.findMany({ where: { published: true }, orderBy: [{ order: "asc" }, { createdAt: "asc" }] }),
@@ -51,11 +51,11 @@ export default async function PortalPage() {
     db.blurb.findMany({ where: { published: true }, orderBy: [{ order: "asc" }, { createdAt: "asc" }] }),
   ]);
 
-  void track("portal_viewed", { userId: user.id });
+  void track("portal_viewed", { userId: user?.id ?? null });
 
   return (
     <div className="melow-glow flex min-h-full flex-1 flex-col">
-      <PortalNav userEmail={user.email} isAdmin={user.role === "admin"} active="portal" />
+      <PortalNav userEmail={user?.email ?? null} isAdmin={user?.role === "admin"} active="portal" />
 
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-24 pt-12 sm:pt-16">
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
@@ -171,7 +171,7 @@ export default async function PortalPage() {
         </div>
 
         <p className="mt-12 text-center text-xs text-faint">
-          Private &amp; confidential — please don’t share portal access. Questions? Contact Pepe or Alex.
+          Questions, intros, or anything else? Contact Pepe or Alex.
         </p>
       </main>
     </div>
