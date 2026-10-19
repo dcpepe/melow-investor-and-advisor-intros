@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import type { ContentEntity } from "@/lib/content-ops";
 import {
   saveContentItem,
   deleteContentItem,
   togglePublished,
   moveContentItem,
-  type ContentEntity,
 } from "@/lib/actions/content";
 
 export type FieldDef = {
