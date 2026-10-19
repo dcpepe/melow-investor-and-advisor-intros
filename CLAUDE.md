@@ -34,6 +34,23 @@ order). ICP cards: `bullets` is one bullet per line in a single string.
 
 After writing, GET again and confirm the change landed before reporting success.
 
+### If the API calls fail, diagnose before flailing
+
+- `curl` exit 000 / `connect_rejected` / "blocked by the network egress proxy": this
+  session's cloud environment does not allow the portal's domain. Do NOT keep retrying or
+  invent workarounds. Tell the user exactly this: open the cloud environment menu in the
+  session title bar → Edit → **Network access** → allow all domains or add
+  `melow-investor-and-advisor-intros.vercel.app` to Allowed domains, then start a new
+  session. (Running on a desktop/local Claude instead avoids this entirely.)
+- HTTP 401: the token is missing or wrong. Read it from `$AGENT_API_TOKEN`; if unset, tell
+  the user to add it in the environment settings under Network secrets / environment
+  variables (same value as the `AGENT_API_TOKEN` variable in Vercel), then start a new
+  session. Never ask them to paste the token into chat.
+- HTTP 500 from the API: report the failing operation and its JSON body verbatim.
+
+As a fallback when the API is unreachable and the user needs a change urgently: content can
+be edited by hand in the portal admin at `/admin` (login in Ops notes below).
+
 ## Code changes
 
 - Develop on a feature branch, open a PR to `main`; Vercel auto-deploys `main`.
