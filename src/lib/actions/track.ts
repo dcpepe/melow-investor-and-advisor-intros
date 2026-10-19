@@ -10,6 +10,8 @@ const ALLOWED_EVENTS = new Set([
   "video_opened",
   "video_link_copied",
   "portal_viewed",
+  "accounts_csv_downloaded",
+  "intro_prompt_copied",
 ]);
 
 export async function trackEvent(eventType: string, entityType?: string, entityId?: string) {

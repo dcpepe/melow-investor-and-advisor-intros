@@ -7,6 +7,42 @@ import { VideoCard } from "@/components/portal/VideoCard";
 import { AccountChips } from "@/components/portal/AccountChips";
 import { MaterialRow } from "@/components/portal/MaterialRow";
 import { BlurbCard } from "@/components/portal/BlurbCard";
+import { DownloadCsvButton } from "@/components/portal/DownloadCsvButton";
+import { IntroPromptCard } from "@/components/portal/IntroPromptCard";
+
+function slugify(text: string) {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
+type ListWithAccounts = { title: string; description: string | null; accounts: { name: string }[] };
+
+function buildIntroPrompt(icpTitles: string[], lists: ListWithAccounts[]): string {
+  const listsBlock = lists
+    .filter((l) => l.accounts.length > 0)
+    .map((l) => `### ${l.title}${l.description ? ` — ${l.description}` : ""}\n${l.accounts.map((a) => a.name).join(", ")}`)
+    .join("\n\n");
+
+  return `I'm helping the founders of Melow find warm introductions into their target accounts.
+
+ABOUT MELOW
+Melow helps enterprise teams turn messy, fragmented data into a clean operating layer for reporting, automation, and AI workflows. It connects to the systems companies already use (ERPs, databases, spreadsheets, documents, BI tools) and proves results on the company's own data before they commit.
+
+WHO THE RIGHT PEOPLE ARE
+The most useful intros are to people with titles like:
+${icpTitles.map((t) => `- ${t}`).join("\n")}
+
+THE ACCOUNTS
+${listsBlock}
+
+YOUR TASK
+Search my network — LinkedIn connections, email contacts, CRM, portfolio founders and operators — and:
+1. Find people I know at these companies (or who recently left them), prioritizing the titles above and anyone in data, AI, or transformation leadership.
+2. For each match, give me: company, person's name, title, how I know them, and connection strength (strong / medium / weak).
+3. Rank the results by likely intro quality, treating the account lists in the order given as the priority order.
+4. For my top 5 matches, draft a short double-opt-in message I can send them asking if they'd like an intro to Melow's founders (Pepe and Alex).
+
+Present everything as a table sorted by priority, with the draft messages below it.`;
+}
 
 export const metadata = { title: "Portal | Melow" };
 
@@ -115,20 +151,41 @@ export default async function PortalPage() {
             <div className="mt-4 flex flex-col gap-4">
               {accountLists.map((list) => (
                 <div key={list.id} className="rounded-xl border border-line bg-ink-2 p-5">
-                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
                       <h3 className="text-sm font-semibold text-cream">{list.title}</h3>
                       {list.description && <p className="mt-0.5 text-xs text-muted">{list.description}</p>}
                     </div>
-                    <span className="rounded-full border border-line-2 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-gold-soft">
-                      {list.accounts.length} accounts
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="rounded-full border border-line-2 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-gold-soft">
+                        {list.accounts.length} accounts
+                      </span>
+                      {list.accounts.length > 0 && (
+                        <DownloadCsvButton
+                          filename={`melow-${slugify(list.title)}.csv`}
+                          rows={[["Company"], ...list.accounts.map((a) => [a.name])]}
+                          label="CSV"
+                          entityId={list.id}
+                        />
+                      )}
+                    </div>
                   </div>
                   <div className="mt-4">
                     <AccountChips names={list.accounts.map((a) => a.name)} />
                   </div>
                 </div>
               ))}
+
+              <IntroPromptCard
+                prompt={buildIntroPrompt(
+                  icpBlocks[0]?.bullets.split("\n").map((b) => b.trim()).filter(Boolean) ?? [],
+                  accountLists
+                )}
+                csvRows={[
+                  ["Company", "List"],
+                  ...accountLists.flatMap((l) => l.accounts.map((a) => [a.name, l.title])),
+                ]}
+              />
             </div>
           </SectionCard>
 
