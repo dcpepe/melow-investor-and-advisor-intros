@@ -16,7 +16,7 @@ export default async function AdminAccessPage() {
   return (
     <div className="flex flex-col gap-6">
       <p className="text-xs text-muted">
-        The portal itself is public — accounts here are only for people who manage it (admins) or
+        The portal itself is public. Accounts here are only for people who manage it (admins) or
         were invited before it went open.
       </p>
 

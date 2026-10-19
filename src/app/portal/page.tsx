@@ -19,7 +19,7 @@ type ListWithAccounts = { title: string; description: string | null; accounts: {
 function buildIntroPrompt(icpTitles: string[], lists: ListWithAccounts[]): string {
   const listsBlock = lists
     .filter((l) => l.accounts.length > 0)
-    .map((l) => `### ${l.title}${l.description ? ` — ${l.description}` : ""}\n${l.accounts.map((a) => a.name).join(", ")}`)
+    .map((l) => `### ${l.title}${l.description ? ` (${l.description})` : ""}\n${l.accounts.map((a) => a.name).join(", ")}`)
     .join("\n\n");
 
   return `I'm helping the founders of Melow find warm introductions into their target accounts.
@@ -35,7 +35,7 @@ THE ACCOUNTS
 ${listsBlock}
 
 YOUR TASK
-Search my network — LinkedIn connections, email contacts, CRM, portfolio founders and operators — and:
+Search my network, including LinkedIn connections, email contacts, CRM, and portfolio founders and operators, and:
 1. Find people I know at these companies (or who recently left them), prioritizing the titles above and anyone in data, AI, or transformation leadership.
 2. For each match, give me: company, person's name, title, how I know them, and connection strength (strong / medium / weak).
 3. Rank the results by likely intro quality, treating the account lists in the order given as the priority order.
@@ -151,7 +151,7 @@ export default async function PortalPage() {
             <div className="mt-4 flex flex-col gap-4">
               <div className="rounded-xl border border-line bg-surface-2/60 px-4 py-3 text-xs leading-relaxed text-muted">
                 <span className="font-medium text-gold-soft">How this works:</span>{" "}
-                below are our priority accounts — the companies we want to get in front of.{" "}
+                below are our priority accounts, the companies we want to get in front of.{" "}
                 <span className="text-cream">Download any list as a CSV</span>, or copy the{" "}
                 <span className="text-cream">AI prompt at the bottom</span> and run it with Claude (or
                 any agent that can see your contacts) to find warm paths in your network. One good
