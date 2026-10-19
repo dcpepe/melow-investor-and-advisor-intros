@@ -7,14 +7,14 @@ import { PortalNav } from "@/components/PortalNav";
 import { CopyButton } from "@/components/CopyButton";
 
 export default async function MaterialPage({ params }: { params: Promise<{ id: string }> }) {
+  // Public like the portal itself — prospects can open shared material links directly.
   const user = await getCurrentUser();
-  if (!user) redirect("/login");
 
   const { id } = await params;
   const material = await db.salesMaterial.findUnique({ where: { id } });
-  if (!material || (!material.published && user.role !== "admin")) notFound();
+  if (!material || (!material.published && user?.role !== "admin")) notFound();
 
-  await track("material_opened", { userId: user.id, entityType: "salesMaterial", entityId: material.id });
+  await track("material_opened", { userId: user?.id ?? null, entityType: "salesMaterial", entityId: material.id });
 
   // Link-type materials (or external-only ones) go straight to the external URL.
   if (!material.fileUrl && material.externalUrl) redirect(material.externalUrl);
@@ -23,7 +23,7 @@ export default async function MaterialPage({ params }: { params: Promise<{ id: s
 
   return (
     <div className="flex min-h-full flex-1 flex-col">
-      <PortalNav userEmail={user.email} isAdmin={user.role === "admin"} active="portal" />
+      <PortalNav userEmail={user?.email ?? null} isAdmin={user?.role === "admin"} active="portal" />
 
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 pb-10 pt-8">
         <div className="flex flex-wrap items-center justify-between gap-3">

@@ -7,8 +7,8 @@ export function PortalNav({
   isAdmin,
   active,
 }: {
-  userEmail: string;
-  isAdmin: boolean;
+  userEmail: string | null;
+  isAdmin?: boolean;
   active: "portal" | "admin";
 }) {
   return (
@@ -18,23 +18,34 @@ export function PortalNav({
           <MelowLogo />
         </Link>
         <div className="flex items-center gap-2 sm:gap-3">
-          <span className="hidden text-xs text-faint md:inline">{userEmail}</span>
-          {isAdmin && (
+          {userEmail ? (
+            <>
+              <span className="hidden text-xs text-faint md:inline">{userEmail}</span>
+              {isAdmin && (
+                <Link
+                  href={active === "admin" ? "/portal" : "/admin"}
+                  className="rounded-full border border-line-2 bg-surface-2 px-3 py-1.5 text-xs font-medium text-cream transition-colors hover:border-gold-dim hover:text-gold"
+                >
+                  {active === "admin" ? "View portal" : "Admin"}
+                </Link>
+              )}
+              <form action={logout}>
+                <button
+                  type="submit"
+                  className="cursor-pointer rounded-full px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:text-gold"
+                >
+                  Sign out
+                </button>
+              </form>
+            </>
+          ) : (
             <Link
-              href={active === "admin" ? "/portal" : "/admin"}
-              className="rounded-full border border-line-2 bg-surface-2 px-3 py-1.5 text-xs font-medium text-cream transition-colors hover:border-gold-dim hover:text-gold"
+              href="/login"
+              className="rounded-full px-3 py-1.5 text-xs font-medium text-faint transition-colors hover:text-gold"
             >
-              {active === "admin" ? "View portal" : "Admin"}
+              Admin
             </Link>
           )}
-          <form action={logout}>
-            <button
-              type="submit"
-              className="cursor-pointer rounded-full px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:text-gold"
-            >
-              Sign out
-            </button>
-          </form>
         </div>
       </div>
     </header>
