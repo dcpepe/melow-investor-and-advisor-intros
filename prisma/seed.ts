@@ -96,7 +96,7 @@ async function seedContent() {
   const lists = [
     {
       title: "Active pipeline",
-      description: "Companies we’re already in active conversations with — shared for context.",
+      description: "Companies we’re already in active conversations with, shared for context.",
       accounts: [
         "Siemens", "UBS", "Allianz", "BMW Group", "Volkswagen Group", "Lufthansa Group",
         "Deutsche Telekom", "Iberdrola",

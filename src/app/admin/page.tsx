@@ -80,7 +80,7 @@ export default async function AdminContentPage() {
     <div className="flex flex-col gap-6">
       <ContentSection
         entity="video"
-        heading="Watch & Share — videos"
+        heading="Videos"
         description="Video cards shown in the first portal block."
         addLabel="Add video"
         fields={videoFields}
@@ -100,7 +100,7 @@ export default async function AdminContentPage() {
 
       <ContentSection
         entity="icpBlock"
-        heading="What we’re looking for — profile cards"
+        heading="Profile cards"
         description="The ICP titles and company profile cards."
         addLabel="Add card"
         fields={icpFields}

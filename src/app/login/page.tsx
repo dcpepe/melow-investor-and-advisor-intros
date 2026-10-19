@@ -25,7 +25,7 @@ export default async function LoginPage() {
           <span className="text-gold-soft">Investor &amp; Advisor</span> Intro Portal
         </h1>
         <p className="mt-4 text-center text-sm leading-relaxed text-muted">
-          The portal itself is open — sign in only if you manage its content, invites, and access.
+          The portal itself is open. Sign in only if you manage its content, invites, and access.
         </p>
 
         <LoginForm />
