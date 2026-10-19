@@ -149,6 +149,15 @@ export default async function PortalPage() {
             </div>
 
             <div className="mt-4 flex flex-col gap-4">
+              <div className="rounded-xl border border-line bg-surface-2/60 px-4 py-3 text-xs leading-relaxed text-muted">
+                <span className="font-medium text-gold-soft">How this works:</span>{" "}
+                below are our priority accounts — the companies we want to get in front of.{" "}
+                <span className="text-cream">Download any list as a CSV</span>, or copy the{" "}
+                <span className="text-cream">AI prompt at the bottom</span> and run it with Claude (or
+                any agent that can see your contacts) to find warm paths in your network. One good
+                intro is the most valuable thing you can do for us.
+              </div>
+
               {accountLists.map((list) => (
                 <div key={list.id} className="rounded-xl border border-line bg-ink-2 p-5">
                   <div className="flex flex-wrap items-center justify-between gap-2">
