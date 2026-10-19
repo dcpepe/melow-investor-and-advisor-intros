@@ -165,7 +165,8 @@ export default async function PortalPage() {
                 prompt={renderIntroPrompt(
                   promptSetting?.value ?? DEFAULT_INTRO_PROMPT_TEMPLATE,
                   icpBlocks[0]?.bullets.split("\n").map((b) => b.trim()).filter(Boolean) ?? [],
-                  accountLists
+                  accountLists,
+                  blurbs
                 )}
                 csvRows={[
                   ["Company", "List"],

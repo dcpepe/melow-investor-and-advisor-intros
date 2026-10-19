@@ -20,9 +20,10 @@ export function IntroPromptEditor({ template }: { template: string }) {
       <h2 className="text-sm font-semibold">Network-mining prompt</h2>
       <p className="mt-0.5 text-xs text-muted">
         The prompt investors copy from the portal (&ldquo;Mine your network with AI&rdquo;). The
-        placeholders <code className="rounded bg-ink-2 px-1 py-0.5 text-gold-soft">{"{{ICP_TITLES}}"}</code>{" "}
-        and <code className="rounded bg-ink-2 px-1 py-0.5 text-gold-soft">{"{{ACCOUNT_LISTS}}"}</code> are
-        filled automatically from the cards and lists above, so keep them in the text.
+        placeholders <code className="rounded bg-ink-2 px-1 py-0.5 text-gold-soft">{"{{ICP_TITLES}}"}</code>,{" "}
+        <code className="rounded bg-ink-2 px-1 py-0.5 text-gold-soft">{"{{ACCOUNT_LISTS}}"}</code> and{" "}
+        <code className="rounded bg-ink-2 px-1 py-0.5 text-gold-soft">{"{{BLURBS}}"}</code> are filled
+        automatically from the cards, lists, and published blurbs, so keep them in the text.
       </p>
       <form action={handleSave} className="mt-4 flex flex-col gap-3">
         <textarea

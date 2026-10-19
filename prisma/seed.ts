@@ -1,17 +1,28 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { DEFAULT_INTRO_PROMPT_TEMPLATE, INTRO_PROMPT_SETTING_KEY } from "../src/lib/intro-prompt";
+import {
+  DEFAULT_INTRO_PROMPT_TEMPLATE,
+  INTRO_PROMPT_SETTING_KEY,
+  PREVIOUS_INTRO_PROMPT_TEMPLATES,
+} from "../src/lib/intro-prompt";
 
 const db = new PrismaClient();
 
 async function seedSettings() {
-  // Create-only: never overwrite an admin-edited template.
-  await db.setting.upsert({
-    where: { key: INTRO_PROMPT_SETTING_KEY },
-    create: { key: INTRO_PROMPT_SETTING_KEY, value: DEFAULT_INTRO_PROMPT_TEMPLATE },
-    update: {},
-  });
-  console.log("Ensured intro prompt template setting.");
+  const existing = await db.setting.findUnique({ where: { key: INTRO_PROMPT_SETTING_KEY } });
+  if (!existing) {
+    await db.setting.create({ data: { key: INTRO_PROMPT_SETTING_KEY, value: DEFAULT_INTRO_PROMPT_TEMPLATE } });
+    console.log("Created intro prompt template setting.");
+  } else if (PREVIOUS_INTRO_PROMPT_TEMPLATES.includes(existing.value)) {
+    // Untouched older default: upgrade it. Admin-edited templates are never overwritten.
+    await db.setting.update({
+      where: { key: INTRO_PROMPT_SETTING_KEY },
+      data: { value: DEFAULT_INTRO_PROMPT_TEMPLATE },
+    });
+    console.log("Upgraded intro prompt template to the latest default.");
+  } else {
+    console.log("Intro prompt template present (possibly edited) — left unchanged.");
+  }
 }
 
 async function seedAdmin() {

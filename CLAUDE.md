@@ -33,8 +33,8 @@ Account lists: pass `accounts` in `data` as an array of names (replaces the whol
 order). ICP cards: `bullets` is one bullet per line in a single string.
 The network-mining prompt shown on the portal is a template (GET returns it as
 `introPromptTemplate`); change it with `{ "action": "update", "entity": "introPromptTemplate",
-"data": { "value": "…" } }` and keep the `{{ICP_TITLES}}` and `{{ACCOUNT_LISTS}}`
-placeholders in the text — they are filled from live content at render time.
+"data": { "value": "…" } }` and keep the `{{ICP_TITLES}}`, `{{ACCOUNT_LISTS}}` and
+`{{BLURBS}}` placeholders in the text — they are filled from live content at render time.
 
 After writing, GET again and confirm the change landed before reporting success.
 
