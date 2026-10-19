@@ -95,32 +95,31 @@ async function seedContent() {
 
   const lists = [
     {
-      title: "Top priority accounts",
-      description: "Our highest-priority target accounts.",
+      title: "Active pipeline",
+      description: "Companies we’re already in active conversations with — shared for context.",
       accounts: [
         "Siemens", "UBS", "Allianz", "BMW Group", "Volkswagen Group", "Lufthansa Group",
-        "Deutsche Telekom", "Iberdrola", "Repsol", "Santander", "BBVA", "AXA", "Zurich Insurance",
-        "Munich Re", "Bosch", "Schneider Electric", "ABB", "Airbus", "TUI Group", "Maersk",
-        "DHL Group", "Inditex", "Carrefour", "Nestlé",
+        "Deutsche Telekom", "Iberdrola",
       ],
     },
     {
-      title: "Land and expand accounts",
-      description: "Accounts where a narrow first use case could expand into a broader Melow deployment.",
+      title: "Prospecting",
+      description: "Accounts we’re actively working to reach.",
       accounts: [
         "Telefónica", "NTT Data", "Endesa", "Naturgy", "Ferrovial", "ACS Group", "Mapfre",
-        "CaixaBank", "Renfe", "Aena", "Acciona", "Sacyr", "Meliá Hotels", "NH Hotels",
-        "Iberia", "Cepsa",
+        "CaixaBank", "Renfe", "Aena", "Acciona", "Meliá Hotels", "Iberia", "Cepsa",
       ],
     },
     {
-      title: "EMEA strategic accounts",
-      description: "Strategic accounts headquartered or heavily active in EMEA.",
+      title: "Target accounts",
+      description: "Companies we’d love a warm intro to.",
       accounts: [
         "Shell", "BP", "TotalEnergies", "Vodafone", "Orange", "Enel", "E.ON", "RWE",
         "ING", "HSBC", "Barclays", "Deutsche Bank", "BNP Paribas", "Société Générale",
         "Generali", "Bayer", "BASF", "Continental", "Stellantis", "Renault Group",
-        "Air France-KLM", "Ryanair", "IAG", "EDF",
+        "Air France-KLM", "IAG", "EDF", "Repsol", "Santander", "BBVA", "AXA",
+        "Zurich Insurance", "Munich Re", "Bosch", "Schneider Electric", "ABB", "Airbus",
+        "TUI Group", "Maersk", "DHL Group", "Inditex", "Carrefour", "Nestlé",
       ],
     },
   ];

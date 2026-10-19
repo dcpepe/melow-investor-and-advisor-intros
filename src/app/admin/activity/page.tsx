@@ -11,6 +11,8 @@ const EVENT_LABELS: Record<string, string> = {
   video_link_copied: "Video links copied",
   video_opened: "Videos opened",
   invite_accepted: "Invites accepted",
+  accounts_csv_downloaded: "Account CSVs downloaded",
+  intro_prompt_copied: "Intro prompts copied",
 };
 
 export default async function AdminActivityPage() {
