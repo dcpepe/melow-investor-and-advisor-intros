@@ -11,11 +11,12 @@ import {
   moveContentCore,
 } from "@/lib/content-ops";
 
-export type { ContentEntity };
+// NOTE: no type re-exports here — "use server" modules may only export async
+// functions, and a type re-export becomes a broken runtime reference.
 
 function revalidate() {
   revalidatePath("/portal");
-  revalidatePath("/admin/content");
+  revalidatePath("/admin");
 }
 
 export async function saveContentItem(entity: ContentEntity, formData: FormData) {

@@ -108,6 +108,6 @@ export async function POST(req: Request) {
   }
 
   revalidatePath("/portal");
-  revalidatePath("/admin/content");
+  revalidatePath("/admin");
   return NextResponse.json({ results });
 }
