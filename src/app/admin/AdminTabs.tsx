@@ -4,10 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const TABS = [
-  { href: "/admin", label: "Overview" },
-  { href: "/admin/users", label: "Users" },
-  { href: "/admin/invites", label: "Invites" },
-  { href: "/admin/content", label: "Content" },
+  { href: "/admin", label: "Content" },
+  { href: "/admin/activity", label: "Activity" },
+  { href: "/admin/access", label: "Access" },
 ];
 
 export function AdminTabs() {
