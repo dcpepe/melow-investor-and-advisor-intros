@@ -53,10 +53,29 @@ async function seedAdmin() {
   console.log(`Ensured admin user ${email} (password synced from ADMIN_PASSWORD)`);
 }
 
+const CONTENT_SEEDED_FLAG = "contentSeeded";
+
 async function seedContent() {
-  const hasContent = await db.video.count();
-  if (hasContent > 0) {
-    console.log("Content already seeded — skipping.");
+  // The placeholder content must be planted at most ONCE per database, tracked
+  // by a flag. Counting rows is wrong: an admin deleting everything is a
+  // deliberate act, and the seed (which runs on every deploy) must never
+  // resurrect deleted content.
+  const flag = await db.setting.findUnique({ where: { key: CONTENT_SEEDED_FLAG } });
+  if (flag) {
+    console.log("Content seed already ran once — skipping.");
+    return;
+  }
+
+  const existing =
+    (await db.video.count()) +
+    (await db.icpBlock.count()) +
+    (await db.accountList.count()) +
+    (await db.salesMaterial.count()) +
+    (await db.blurb.count());
+  if (existing > 0) {
+    // Database predates the flag: content is live, so mark the seed as done.
+    await db.setting.create({ data: { key: CONTENT_SEEDED_FLAG, value: new Date().toISOString() } });
+    console.log("Existing content found — marked content seed as done without changes.");
     return;
   }
 
@@ -242,6 +261,7 @@ async function seedContent() {
     ],
   });
 
+  await db.setting.create({ data: { key: CONTENT_SEEDED_FLAG, value: new Date().toISOString() } });
   console.log("Seeded portal content.");
 }
 
