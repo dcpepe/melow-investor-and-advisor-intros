@@ -43,7 +43,28 @@ For local development you can point `DATABASE_URL`/`DIRECT_URL` at any Postgres 
 
 ### Creating the first admin
 
-Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env`, then run `npm run db:seed`. The seed is idempotent — it skips anything that already exists. Additional admins can be invited from **Admin → Invites** with the role set to "Admin".
+Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env`, then run `npm run db:seed`. The seed runs on every deploy and **keeps the admin's password in sync with `ADMIN_PASSWORD`** — so to reset the admin login, change that variable and redeploy. Additional admins can be invited from **Admin → Invites** with the role set to "Admin".
+
+### Agent content API (update the portal with Claude)
+
+With `AGENT_API_TOKEN` set, `/api/agent/content` lets a trusted automation read and manage all portal content:
+
+```bash
+# Read everything (including unpublished items, with ids)
+curl -H "Authorization: Bearer $AGENT_API_TOKEN" https://<portal-domain>/api/agent/content
+
+# Apply changes (operations run in order)
+curl -X POST -H "Authorization: Bearer $AGENT_API_TOKEN" -H 'Content-Type: application/json' \
+  -d '{"operations":[
+    {"action":"create","entity":"blurb","data":{"title":"New blurb","body":"…"}},
+    {"action":"update","entity":"accountList","id":"<id>","data":{"accounts":["Siemens","UBS"]}},
+    {"action":"publish","entity":"video","id":"<id>","published":false},
+    {"action":"move","entity":"salesMaterial","id":"<id>","direction":"up"},
+    {"action":"delete","entity":"blurb","id":"<id>"}
+  ]}' https://<portal-domain>/api/agent/content
+```
+
+Entities: `video`, `icpBlock`, `accountList`, `salesMaterial`, `blurb`. For `update`, only the fields present in `data` change; `accountList` accepts `accounts` as an array (or one-per-line string) that replaces the list in order. The token must be kept secret — anyone holding it can edit portal content.
 
 ## How it works
 

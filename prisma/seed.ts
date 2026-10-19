@@ -10,21 +10,25 @@ async function seedAdmin() {
     console.log("ADMIN_EMAIL / ADMIN_PASSWORD not set — skipping admin creation.");
     return;
   }
-  const existing = await db.user.findUnique({ where: { email } });
-  if (existing) {
-    console.log(`Admin ${email} already exists — skipping.`);
-    return;
-  }
-  await db.user.create({
-    data: {
+  // Upsert so the ADMIN_PASSWORD env var is always this account's password:
+  // changing it in the deploy environment and redeploying resets the login.
+  const passwordHash = await bcrypt.hash(password, 12);
+  await db.user.upsert({
+    where: { email },
+    create: {
       email,
       name: process.env.ADMIN_NAME || null,
-      passwordHash: await bcrypt.hash(password, 12),
+      passwordHash,
+      role: "admin",
+      status: "active",
+    },
+    update: {
+      passwordHash,
       role: "admin",
       status: "active",
     },
   });
-  console.log(`Created admin user ${email}`);
+  console.log(`Ensured admin user ${email} (password synced from ADMIN_PASSWORD)`);
 }
 
 async function seedContent() {
