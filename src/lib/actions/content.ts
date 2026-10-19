@@ -10,6 +10,8 @@ import {
   setPublishedCore,
   moveContentCore,
 } from "@/lib/content-ops";
+import { db } from "@/lib/db";
+import { DEFAULT_INTRO_PROMPT_TEMPLATE, INTRO_PROMPT_SETTING_KEY } from "@/lib/intro-prompt";
 
 // NOTE: no type re-exports here — "use server" modules may only export async
 // functions, and a type re-export becomes a broken runtime reference.
@@ -49,5 +51,26 @@ export async function togglePublished(entity: ContentEntity, id: string) {
 export async function moveContentItem(entity: ContentEntity, id: string, direction: "up" | "down") {
   await requireAdmin();
   await moveContentCore(entity, id, direction);
+  revalidate();
+}
+
+export async function saveIntroPrompt(formData: FormData) {
+  await requireAdmin();
+  const value = String(formData.get("value") || "").trim() || DEFAULT_INTRO_PROMPT_TEMPLATE;
+  await db.setting.upsert({
+    where: { key: INTRO_PROMPT_SETTING_KEY },
+    create: { key: INTRO_PROMPT_SETTING_KEY, value },
+    update: { value },
+  });
+  revalidate();
+}
+
+export async function resetIntroPrompt() {
+  await requireAdmin();
+  await db.setting.upsert({
+    where: { key: INTRO_PROMPT_SETTING_KEY },
+    create: { key: INTRO_PROMPT_SETTING_KEY, value: DEFAULT_INTRO_PROMPT_TEMPLATE },
+    update: { value: DEFAULT_INTRO_PROMPT_TEMPLATE },
+  });
   revalidate();
 }

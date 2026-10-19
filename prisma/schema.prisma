@@ -106,6 +106,12 @@ model Blurb {
   updatedAt DateTime @updatedAt
 }
 
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
 model AnalyticsEvent {
   id         String   @id @default(cuid())
   userId     String?

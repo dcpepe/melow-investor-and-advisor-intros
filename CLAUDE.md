@@ -31,6 +31,10 @@ Operations: `create` (entity, data), `update` (entity, id, data — only fields 
 Entities: `video`, `icpBlock`, `accountList`, `salesMaterial`, `blurb`.
 Account lists: pass `accounts` in `data` as an array of names (replaces the whole list in
 order). ICP cards: `bullets` is one bullet per line in a single string.
+The network-mining prompt shown on the portal is a template (GET returns it as
+`introPromptTemplate`); change it with `{ "action": "update", "entity": "introPromptTemplate",
+"data": { "value": "…" } }` and keep the `{{ICP_TITLES}}` and `{{ACCOUNT_LISTS}}`
+placeholders in the text — they are filled from live content at render time.
 
 After writing, GET again and confirm the change landed before reporting success.
 

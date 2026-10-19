@@ -9,39 +9,14 @@ import { MaterialRow } from "@/components/portal/MaterialRow";
 import { BlurbCard } from "@/components/portal/BlurbCard";
 import { DownloadCsvButton } from "@/components/portal/DownloadCsvButton";
 import { IntroPromptCard } from "@/components/portal/IntroPromptCard";
+import {
+  DEFAULT_INTRO_PROMPT_TEMPLATE,
+  INTRO_PROMPT_SETTING_KEY,
+  renderIntroPrompt,
+} from "@/lib/intro-prompt";
 
 function slugify(text: string) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-}
-
-type ListWithAccounts = { title: string; description: string | null; accounts: { name: string }[] };
-
-function buildIntroPrompt(icpTitles: string[], lists: ListWithAccounts[]): string {
-  const listsBlock = lists
-    .filter((l) => l.accounts.length > 0)
-    .map((l) => `### ${l.title}${l.description ? ` (${l.description})` : ""}\n${l.accounts.map((a) => a.name).join(", ")}`)
-    .join("\n\n");
-
-  return `I'm helping the founders of Melow find warm introductions into their target accounts.
-
-ABOUT MELOW
-Melow helps enterprise teams turn messy, fragmented data into a clean operating layer for reporting, automation, and AI workflows. It connects to the systems companies already use (ERPs, databases, spreadsheets, documents, BI tools) and proves results on the company's own data before they commit.
-
-WHO THE RIGHT PEOPLE ARE
-The most useful intros are to people with titles like:
-${icpTitles.map((t) => `- ${t}`).join("\n")}
-
-THE ACCOUNTS
-${listsBlock}
-
-YOUR TASK
-Search my network, including LinkedIn connections, email contacts, CRM, and portfolio founders and operators, and:
-1. Find people I know at these companies (or who recently left them), prioritizing the titles above and anyone in data, AI, or transformation leadership.
-2. For each match, give me: company, person's name, title, how I know them, and connection strength (strong / medium / weak).
-3. Rank the results by likely intro quality, treating the account lists in the order given as the priority order.
-4. For my top 5 matches, draft a short double-opt-in message I can send them asking if they'd like an intro to Melow's founders (Pepe and Alex).
-
-Present everything as a table sorted by priority, with the draft messages below it.`;
 }
 
 export const metadata = { title: "Portal | Melow" };
@@ -75,7 +50,7 @@ export default async function PortalPage() {
   // only needed for the admin dashboard.
   const user = await getCurrentUser();
 
-  const [videos, icpBlocks, accountLists, materials, blurbs] = await Promise.all([
+  const [videos, icpBlocks, accountLists, materials, blurbs, promptSetting] = await Promise.all([
     db.video.findMany({ where: { published: true }, orderBy: [{ order: "asc" }, { createdAt: "asc" }] }),
     db.icpBlock.findMany({ where: { published: true }, orderBy: [{ order: "asc" }, { createdAt: "asc" }] }),
     db.accountList.findMany({
@@ -85,6 +60,7 @@ export default async function PortalPage() {
     }),
     db.salesMaterial.findMany({ where: { published: true }, orderBy: [{ order: "asc" }, { createdAt: "asc" }] }),
     db.blurb.findMany({ where: { published: true }, orderBy: [{ order: "asc" }, { createdAt: "asc" }] }),
+    db.setting.findUnique({ where: { key: INTRO_PROMPT_SETTING_KEY } }),
   ]);
 
   void track("portal_viewed", { userId: user?.id ?? null });
@@ -186,7 +162,8 @@ export default async function PortalPage() {
               ))}
 
               <IntroPromptCard
-                prompt={buildIntroPrompt(
+                prompt={renderIntroPrompt(
+                  promptSetting?.value ?? DEFAULT_INTRO_PROMPT_TEMPLATE,
                   icpBlocks[0]?.bullets.split("\n").map((b) => b.trim()).filter(Boolean) ?? [],
                   accountLists
                 )}

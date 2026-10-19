@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/session";
 import { ContentSection, type FieldDef } from "@/components/admin/ContentSection";
+import { IntroPromptEditor } from "@/components/admin/IntroPromptEditor";
+import { DEFAULT_INTRO_PROMPT_TEMPLATE, INTRO_PROMPT_SETTING_KEY } from "@/lib/intro-prompt";
 
 const MATERIAL_TYPES = ["Deck", "Case study", "One-pager", "Memo", "PDF", "Link"];
 
@@ -68,12 +70,13 @@ export default async function AdminContentPage() {
   await requireAdmin();
 
   const orderBy = [{ order: "asc" as const }, { createdAt: "asc" as const }];
-  const [videos, icpBlocks, accountLists, materials, blurbs] = await Promise.all([
+  const [videos, icpBlocks, accountLists, materials, blurbs, promptSetting] = await Promise.all([
     db.video.findMany({ orderBy }),
     db.icpBlock.findMany({ orderBy }),
     db.accountList.findMany({ orderBy, include: { accounts: { orderBy } } }),
     db.salesMaterial.findMany({ orderBy }),
     db.blurb.findMany({ orderBy }),
+    db.setting.findUnique({ where: { key: INTRO_PROMPT_SETTING_KEY } }),
   ]);
 
   return (
@@ -131,6 +134,8 @@ export default async function AdminContentPage() {
           },
         }))}
       />
+
+      <IntroPromptEditor template={promptSetting?.value ?? DEFAULT_INTRO_PROMPT_TEMPLATE} />
 
       <ContentSection
         entity="salesMaterial"

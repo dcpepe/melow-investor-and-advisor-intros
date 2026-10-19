@@ -10,6 +10,8 @@ import {
   setPublishedCore,
   moveContentCore,
 } from "@/lib/content-ops";
+import { db } from "@/lib/db";
+import { DEFAULT_INTRO_PROMPT_TEMPLATE, INTRO_PROMPT_SETTING_KEY } from "@/lib/intro-prompt";
 
 /**
  * Agent content API — lets a trusted automation (e.g. Claude) read and manage
@@ -42,12 +44,19 @@ const unauthorized = () =>
 
 export async function GET(req: Request) {
   if (!authorized(req)) return unauthorized();
-  return NextResponse.json(await getAllContent());
+  const [content, promptSetting] = await Promise.all([
+    getAllContent(),
+    db.setting.findUnique({ where: { key: INTRO_PROMPT_SETTING_KEY } }),
+  ]);
+  return NextResponse.json({
+    ...content,
+    introPromptTemplate: promptSetting?.value ?? DEFAULT_INTRO_PROMPT_TEMPLATE,
+  });
 }
 
 type Operation = {
   action: "create" | "update" | "delete" | "publish" | "move";
-  entity: ContentEntity;
+  entity: ContentEntity | "introPromptTemplate";
   id?: string;
   data?: Record<string, unknown>;
   published?: boolean;
@@ -71,6 +80,19 @@ export async function POST(req: Request) {
   const results: Array<Record<string, unknown>> = [];
   for (const [i, op] of operations.entries()) {
     try {
+      // The intro prompt template is a single setting: only "update" with data.value.
+      if (op.entity === "introPromptTemplate") {
+        if (op.action !== "update" || typeof op.data?.value !== "string") {
+          throw new Error('introPromptTemplate supports only { action: "update", data: { value } }');
+        }
+        await db.setting.upsert({
+          where: { key: INTRO_PROMPT_SETTING_KEY },
+          create: { key: INTRO_PROMPT_SETTING_KEY, value: op.data.value },
+          update: { value: op.data.value },
+        });
+        results.push({ ok: true, action: op.action, entity: op.entity });
+        continue;
+      }
       if (!CONTENT_ENTITIES.includes(op.entity)) throw new Error(`Unknown entity "${op.entity}"`);
       switch (op.action) {
         case "create": {

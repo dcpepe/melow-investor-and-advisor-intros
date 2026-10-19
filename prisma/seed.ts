@@ -1,7 +1,18 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { DEFAULT_INTRO_PROMPT_TEMPLATE, INTRO_PROMPT_SETTING_KEY } from "../src/lib/intro-prompt";
 
 const db = new PrismaClient();
+
+async function seedSettings() {
+  // Create-only: never overwrite an admin-edited template.
+  await db.setting.upsert({
+    where: { key: INTRO_PROMPT_SETTING_KEY },
+    create: { key: INTRO_PROMPT_SETTING_KEY, value: DEFAULT_INTRO_PROMPT_TEMPLATE },
+    update: {},
+  });
+  console.log("Ensured intro prompt template setting.");
+}
 
 async function seedAdmin() {
   const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
@@ -225,6 +236,7 @@ async function seedContent() {
 
 async function main() {
   await seedAdmin();
+  await seedSettings();
   await seedContent();
 }
 
