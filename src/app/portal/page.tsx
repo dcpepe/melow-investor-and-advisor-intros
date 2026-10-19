@@ -149,7 +149,7 @@ export default async function PortalPage() {
             </div>
 
             <div className="mt-4 flex flex-col gap-4">
-              <div className="rounded-xl border border-line bg-surface-2/60 px-4 py-3 text-xs leading-relaxed text-muted">
+              <div className="rounded-xl border border-line bg-surface-2/60 px-5 py-4 text-sm leading-relaxed text-muted">
                 <span className="font-medium text-gold-soft">How this works:</span>{" "}
                 below are our priority accounts, the companies we want to get in front of.{" "}
                 <span className="text-cream">Download any list as a CSV</span>, or copy the{" "}
