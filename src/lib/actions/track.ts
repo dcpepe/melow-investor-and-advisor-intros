@@ -12,6 +12,7 @@ const ALLOWED_EVENTS = new Set([
   "portal_viewed",
   "accounts_csv_downloaded",
   "intro_prompt_copied",
+  "profile_copied",
 ]);
 
 export async function trackEvent(eventType: string, entityType?: string, entityId?: string) {
