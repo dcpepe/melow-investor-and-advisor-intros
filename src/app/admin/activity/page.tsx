@@ -13,6 +13,7 @@ const EVENT_LABELS: Record<string, string> = {
   invite_accepted: "Invites accepted",
   accounts_csv_downloaded: "Account CSVs downloaded",
   intro_prompt_copied: "Intro prompts copied",
+  profile_copied: "Profile cards copied",
 };
 
 export default async function AdminActivityPage() {

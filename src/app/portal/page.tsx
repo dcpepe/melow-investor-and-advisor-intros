@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/session";
 import { track } from "@/lib/track";
 import { PortalNav } from "@/components/PortalNav";
+import { CopyButton } from "@/components/CopyButton";
 import { SectionCard } from "@/components/portal/SectionCard";
 import { VideoCard } from "@/components/portal/VideoCard";
 import { AccountChips } from "@/components/portal/AccountChips";
@@ -105,23 +106,31 @@ export default async function PortalPage() {
             subtitle="The most impactful introductions match these profiles."
           >
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-              {icpBlocks.map((block) => (
-                <div key={block.id} className="rounded-xl border border-line bg-ink-2 p-5">
-                  <h3 className="text-sm font-semibold text-gold-soft">{block.title}</h3>
-                  <ul className="mt-3 flex flex-col gap-1.5">
-                    {block.bullets
-                      .split("\n")
-                      .map((b) => b.trim())
-                      .filter(Boolean)
-                      .map((bullet, i) => (
+              {icpBlocks.map((block) => {
+                const bullets = block.bullets.split("\n").map((b) => b.trim()).filter(Boolean);
+                return (
+                  <div key={block.id} className="rounded-xl border border-line bg-ink-2 p-5">
+                    <div className="flex items-center justify-between gap-3">
+                      <h3 className="text-sm font-semibold text-gold-soft">{block.title}</h3>
+                      <CopyButton
+                        text={`${block.title}\n${bullets.map((b) => `- ${b}`).join("\n")}`}
+                        label="Copy"
+                        event="profile_copied"
+                        entityType="icpBlock"
+                        entityId={block.id}
+                      />
+                    </div>
+                    <ul className="mt-3 flex flex-col gap-1.5">
+                      {bullets.map((bullet, i) => (
                         <li key={i} className="flex items-start gap-2 text-xs leading-relaxed text-cream/85">
                           <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-gold" />
                           {bullet}
                         </li>
                       ))}
-                  </ul>
-                </div>
-              ))}
+                    </ul>
+                  </div>
+                );
+              })}
             </div>
 
             <div className="mt-4 flex flex-col gap-4">
